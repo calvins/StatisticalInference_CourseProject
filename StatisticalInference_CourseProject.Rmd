@@ -1,0 +1,33 @@
+---
+title: "Statistical Inference Course Project"
+author: "Calvin Seto"
+date: "August 3, 2015"
+output: html_document
+---
+# Report 1
+
+## Overview
+
+## Simulations
+
+## Sample Mean versus Theoretical Mean
+
+## Sample Variance versus Theoretical Variance
+
+## Distribution
+
+
+# Report 2
+
+## Synopsis
+
+## Data Processing
+
+## Data Exploration
+
+## Confidence Intervals and tests
+
+## Results
+
+## Conclusions
+
