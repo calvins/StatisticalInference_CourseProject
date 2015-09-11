@@ -1,0 +1,53 @@
+---
+title: "Statistical Inference Course Project Part 1"
+author: "Calvin Seto"
+date: "September 7, 2015"
+output: html_document
+---
+
+## Overview
+The exponential distribution describes the time between events in a Poisson process, or a process in which events occur continuously and independently at a constant average rate.  But in this exercise, we will investigate the distribution of averages of 40 exponentials and use the Central Limit Theorem to explain how it looks bell shaped.
+
+The Central Limit Theorem states that the distribution of averages of independent and identically distributed variables becomes that of a standard normal (mean = 0, standard deviation = 1) as the sample size increases.
+
+The Law of Large Numbers says that the average limits to what it's estimating, the population mean.
+
+## Simulations
+We'll use simulations to generate a lot of exponentials and plot the means and show the resulting distributions look normal.
+We set $$\lambda = 0.2$$ for all simulations.
+
+```{r}
+set.seed(168)
+library(ggplot2)
+nosim <- 1000
+lambda <- 0.2
+mu <- 1/lambda
+s <- 1/lambda
+cfunc <- function(x, n) sqrt(n) * (mean(x) - mu) / s
+m1 <- matrix(sample(rexp(40,0.2), nosim * 10, replace = TRUE), nosim) # 10x1000 matrix sample 10,000 from 40 random exponentials with replacement
+m2 <- matrix(sample(rexp(40,0.2), nosim * 20, replace = TRUE), nosim) # 20x1000 matrix sample 20,000 from 40 random exponentials with replacement
+m3 <- matrix(sample(rexp(40,0.2), nosim * 30, replace = TRUE), nosim) # 30x1000 matrix sample 30,000 from 40 random exponentials with replacement
+r1 <- apply(m1, 1, cfunc, 10) # apply CLT approximation for each row (sample) of 10 passing n=10 
+r2 <- apply(m2, 1, cfunc, 20) # apply CLT approximation for each row (sample) of 20 passing n=20
+r3 <- apply(m3, 1, cfunc, 30) # apply CLT approximation for each row (sample) of 30 passing n=30
+dat <- data.frame(
+    x = c(r1, r2, r3),
+    size = factor(rep(c(10, 20, 30), rep(nosim, 3))))
+
+```
+
+
+## Sample Mean versus Theoretical Mean
+```{r}
+1/0.2
+```
+
+## Sample Variance versus Theoretical Variance
+```{r}
+1/0.2
+```
+
+## Distribution
+```{r}
+
+```

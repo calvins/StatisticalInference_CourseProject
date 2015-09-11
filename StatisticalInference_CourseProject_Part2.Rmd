@@ -1,0 +1,83 @@
+---
+title: "Statistical Inference Course Project Part 2"
+author: "Calvin Seto"
+date: "September 7, 2015"
+output: html_document
+---
+
+The data consists of measurements of the mean length of the odontoblast cells harvested from 
+the incisor teeth of a population of 60 guinea pigs. These animals were divided into 6 groups of 10 
+and consistently fed a diet with one of 6 Vitamin C supplement regimes for a period of 42 days.
+The Vitamin C was administered either in the form of Orange Juice (OJ) or chemically pure Vitamin C 
+in aqueous solution (VC). Each animal received the same daily dosage of Vitamin C 
+(either 0.5, 1.0 or 2.0 milligrams) consistently. Since each combination of supplement type and dosage
+was given to 10 animals this required a total of 60 animals for the study. 
+After 42 days, the animals were euthanized, their incisor teeth were harvested and subject to analysis 
+via optical microscopy to determine the length (in microns) of the odontoblast cells 
+(the layer between the pulp and the dentine). The ToothGrowth data set therefore consists of 60 observations 
+of the 3 variables - mean length of odontoblasts (microns), supplement type (OJ or VC) and
+Vitamin C dosage (milligrams/day).
+60 obs of 3 variables
+
+-summary ToothGrowth
+-the help file has a conditioning plot of len versus dose conditional on supp
+OJ
+0.5
+1
+2
+VC
+0.5
+1
+2
+
+population of 60 guinea pigs, divided into 6 groups of 10
+
+group 1
+group 2
+group 3
+group 4
+group 5
+group 6
+
+6 different regimes of vitamin C
+regime 1 OJ 0.5
+regime 2 OJ 1.0
+regime 3 OJ 2.0
+regime 4 VC 0.5
+regime 5 VC 1.0
+regime 6 VC 2.0
+
+after 42 days, pigs were euthanized and the mean length of teeth for each group were measured
+
+ToothGrowth dataset
+60 obs of 3 variables-len, supp, dose
+
+row 1 is mean length of tooth for guinea pig 1 from group 1
+row 2 is mean length of tooth for guinea pig 2 from group 1
+row 3 is mean length of tooth for guinea pig 3 from group 1
+...
+row 11 is mean length of tooth for guinea pig 11 from group 2
+row 12 is mean length of tooth for guinea pig 12 from group 2
+row 13 is mean length of tooth for guinea pig 13 from group 2
+...
+row 60 is mean length of tooth for guinea pig 60 from group 6
+
+1-compare by supplement orange juice using 3 dosages vs chemical using 3 dosages
+2-compare by dosage 0.5 using 2 supplements vs 1.0 using 2 supplements vs 2.0 using 2 supplements
+
+so they measured each day and the data set contains the mean of 42 values?
+
+
+
+## Synopsis
+
+## Data Processing
+
+## Data Exploration
+
+## Confidence Intervals and tests
+
+## Results
+
+## Conclusions
+
