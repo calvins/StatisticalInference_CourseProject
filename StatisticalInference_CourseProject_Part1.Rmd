@@ -1,53 +1,211 @@
 ---
-title: "Statistical Inference Course Project Part 1"
+title: "Applying the Central Limit Theorem to Averages of Random Exponentials"
 author: "Calvin Seto"
 date: "September 7, 2015"
 output: html_document
 ---
 
 ## Overview
-The exponential distribution describes the time between events in a Poisson process, or a process in which events occur continuously and independently at a constant average rate.  But in this exercise, we will investigate the distribution of averages of 40 exponentials and use the Central Limit Theorem to explain how it looks bell shaped.
+In this exercise, we will use the Central Limit Theorem to show that the distribution of averages of independent and identically distributed exponential variables becomes that of a standard normal as the sample size increases.  Using R, we can simulate random exponentials of sample size 10, 20, 30, and 40 and compute 1,000 averages for each sample size.  Lastly, we can compute the Central Limit Theorem approximation of the distribution of exponential averages and discuss its attributes.
 
-The Central Limit Theorem states that the distribution of averages of independent and identically distributed variables becomes that of a standard normal (mean = 0, standard deviation = 1) as the sample size increases.
+The Law of Large Numbers says that the sample mean or average limits to what it's estimating, the population mean.
+It assumes the data have to be independent and identically distributed, or iid (independent and all drawn from the same population).
+Figure 1 shows R code that computes 1,000 averages from 1,000 samples of random exponentials and plots the cumulative means.  Notice how the averages are random at first but converge to 5 the mean of the exponential distribution with lambda = 0.2.
 
-The Law of Large Numbers says that the average limits to what it's estimating, the population mean.
+An estimator is consistent if it converges to what you want to estimate.  The sample mean of iid samples is consistent with the population mean.  The sample variance and standard deviation is consitent as well.
+
+The Central Limit Theorem says that the distribution of averages of iid random variables, properly normalized, becomes that of a standard normal as the sample size increases.
+
+The result is that if you subtract the population mean from the sample mean and divide by the standard error, that distribution is standard normal.  Replacing the population sd with the sample sd does not change the CLT.
 
 ## Simulations
-We'll use simulations to generate a lot of exponentials and plot the means and show the resulting distributions look normal.
-We set $$\lambda = 0.2$$ for all simulations.
+We'll use the R function rexp(n, lambda) again to create more random samples of exponentials with sample sizes of 10,000, 20,000 30,000, and 40,000.  We'll set lambda = 0.2 for all simulations and we know the mean = 1/lambda and the standard deviation = 1/lambda.  Therefore, the mean and standard deviation = 1/0.2 = 5.  We'll call these samples of exponentials s1, s2, s3, and s4.
 
-```{r}
-set.seed(168)
+In order to compute our averages of varying sizes of exponentials, we'll reorganize the samples s1, s2, s3, and s4 into matrices m1, m2, m3, and m4 of sizes 1000x10, 1000x20, 1000x30, and 1000x40.  Now it is easy to use the R function apply to normalize the averages with the CLT approximation of subtracting the population mean from the sample mean and dividing by the standard error.
+
+We set up default variables:
+nosim - number of simulations - 1,000
+lambda - exponential distribution rate parameter - 0.2
+mu - mean of the exponential distribution - 1/lambda = 5
+s - standard deviation of the exponential distribution - 1/lambda = 5
+
+The function cfunc(x, n) will normalize a vector x, with sample size n using the CLT result, subtracting the mean of the estimate from the estimate and dividing by the standard error of the estimate.
+
+$$\frac{\bar X_n - \mu}{\sigma / \sqrt{n}}=
+\frac{\sqrt n (\bar X_n - \mu)}{\sigma}
+= \frac{\mbox{Estimate} - \mbox{Mean of estimate}}{\mbox{Std. Err. of estimate}}$$
+
+$\bar X_n$ is approximately
+$N(\mu, \sigma^2 / n)$
+
+The results of the CLT approximations of the distribution of averages of exponentials are stored in the variables x1, x2, x3, x4 - 4 vectors of 1000 numerics.
+
+The dat variable is a data frame of size 4000x2 to hold our CLT approximations and sample size factors of 10, 20, 30, and 40 used to create histograms with ggplot.
+
+We'll set the seed of R's random number generator to 768 368 468 568 so we can reproduce the results.
+
+The properties of the distribution of averages of 40 exponentials is 
+-it is bell shaped and standard normal
+-with a mean = 0
+and variance = 1.
+
+## Sample Mean versus Theoretical Mean
+Figure 4 shows the means of the 4 samples I used
+Sample size  Mean
+10 6.962282
+20 6.265946
+30 5.17774
+40 4.567163
+
+The theoretical mean is 1/lambda = 1/0.2 = 5.
+
+## Sample Variance versus Theoretical Variance
+Figure 5 shows the variances of the 4 samples I used
+Sample Size  Variance
+10 55.92664
+20 58.5126
+30 38.22658
+40 23.12854
+
+The theoretical variance is (1/lambda)^2 = (1/0.2)^2 = 5^2 = 25.
+
+The variances are different because 
+
+## Distribution
+The distribution of the random samples of exponentials are shown in Figure 6 and 7.  Notice the shapes of all four histograms of sample size 10, 20, 30, and 40 are NOT bell shaped.
+
+Figure 8 shows the distributions of averages of 10, 20, 30, and 40 exponentials.
+
+The distribution of the averages of 40 exponentials is standard normal.
+
+The distribution of the averages of 40 exponentials is centered around 0.
+
+The variance of the distribution of the averages of 40 exponentials is 1.
+
+The distribution is bell shaped.
+
+## Appendix
+```{r chunk1, fig.height = 3}
+set.seed(568)
+library(ggplot2)
+n <- 1000
+lambda <- 0.2
+means <- cumsum(sample(rexp(n, lambda), n , replace = TRUE)) / (1  : n)
+g <- ggplot(data.frame(x = 1 : n, y = means), aes(x = x, y = y)) 
+g <- g + geom_hline(yintercept = 5) + geom_line(size = 2) 
+g <- g + labs(x = "Number of obs", y = "Cumulative mean")
+g
+```
+
+```{r chunk2}
+set.seed(568)
 library(ggplot2)
 nosim <- 1000
 lambda <- 0.2
 mu <- 1/lambda
 s <- 1/lambda
 cfunc <- function(x, n) sqrt(n) * (mean(x) - mu) / s
-m1 <- matrix(sample(rexp(40,0.2), nosim * 10, replace = TRUE), nosim) # 10x1000 matrix sample 10,000 from 40 random exponentials with replacement
-m2 <- matrix(sample(rexp(40,0.2), nosim * 20, replace = TRUE), nosim) # 20x1000 matrix sample 20,000 from 40 random exponentials with replacement
-m3 <- matrix(sample(rexp(40,0.2), nosim * 30, replace = TRUE), nosim) # 30x1000 matrix sample 30,000 from 40 random exponentials with replacement
-r1 <- apply(m1, 1, cfunc, 10) # apply CLT approximation for each row (sample) of 10 passing n=10 
-r2 <- apply(m2, 1, cfunc, 20) # apply CLT approximation for each row (sample) of 20 passing n=20
-r3 <- apply(m3, 1, cfunc, 30) # apply CLT approximation for each row (sample) of 30 passing n=30
+
+s1 <- sample(rexp(10,lambda), nosim * 10, replace = TRUE)
+s2 <- sample(rexp(20,lambda), nosim * 20, replace = TRUE)
+s3 <- sample(rexp(30,lambda), nosim * 30, replace = TRUE)
+s4 <- sample(rexp(40,lambda), nosim * 40, replace = TRUE)
+m1 <- matrix(s1, nosim)
+m2 <- matrix(s2, nosim)
+m3 <- matrix(s3, nosim)
+m4 <- matrix(s4, nosim)
+x1 <- apply(m1, 1, cfunc, 10)
+x2 <- apply(m2, 1, cfunc, 20)
+x3 <- apply(m3, 1, cfunc, 30)
+x4 <- apply(m4, 1, cfunc, 40)
+```
+
+```{r chunk3, echo=FALSE}
+library(knitr)
+ss1 <- c(mean(s1), 5, abs(mean(s1) - 5))
+ss2 <- c(mean(s2),5, abs(mean(s2) - 5))
+ss3 <- c(mean(s3),5, abs(mean(s3) - 5))
+ss4 <- c(mean(s4),5, abs(mean(s4) - 5))
+mm <- as.data.frame(rbind(ss1,ss2,ss3,ss4))
+names(mm) <- c("Sample Mean","Theoretical Mean", "Difference")
+row.names(mm) <- c("10", "20", "30", "40")
+kable(mm)
+```
+
+```{r chunk4, echo=FALSE}
+library(knitr)
+v1 <- c(sd(s1)^2, 25, abs(sd(s1)^2 - 25))
+v2 <- c(sd(s2)^2, 25, abs(sd(s2)^2 - 25))
+v3 <- c(sd(s3)^2, 25, abs(sd(s3)^2 - 25))
+v4 <- c(sd(s4)^2, 25, abs(sd(s4)^2 - 25))
+nn <- as.data.frame(rbind(v1,v2,v3,v4))
+names(nn) <- c("Sample Variance","Theoretical Variance", "Difference")
+row.names(nn) <- c("10", "20", "30", "40")
+kable(nn)
+```
+
+```{r chunk5}
 dat <- data.frame(
-    x = c(r1, r2, r3),
-    size = factor(rep(c(10, 20, 30), rep(nosim, 3))))
-
+  x = c(x1, x2, x3, x4),
+  size = factor(rep(c(10, 20, 30, 40), rep(nosim, 4))))
+g <- ggplot(dat, aes(x = x, fill = size)) + geom_histogram(alpha = .20, binwidth=.3, colour = "black", aes(y = ..density..)) 
+g <- g + stat_function(fun = dnorm, size = 2)
+g + facet_grid(. ~ size)
 ```
 
-
-## Sample Mean versus Theoretical Mean
-```{r}
-1/0.2
+```{r chunk6, echo=FALSE}
+library(knitr)
+am1 <- c(mean(x1), 0, abs(mean(x1) - 0))
+am2 <- c(mean(x2), 0, abs(mean(x2) - 0))
+am3 <- c(mean(x3), 0, abs(mean(x3) - 0))
+am4 <- c(mean(x4), 0, abs(mean(x4) - 0))
+oo <- as.data.frame(rbind(am1,am2,am3,am4))
+names(oo) <- c("Averages Mean","Theoretical Mean", "Difference")
+row.names(oo) <- c("10", "20", "30", "40")
+kable(oo)
 ```
 
-## Sample Variance versus Theoretical Variance
-```{r}
-1/0.2
+```{r chunk7, echo=FALSE}
+library(knitr)
+av1 <- c(sd(x1)^2, 1, abs(sd(x1)^2 - 1))
+av2 <- c(sd(x2)^2, 1, abs(sd(x2)^2 - 1))
+av3 <- c(sd(x3)^2, 1, abs(sd(x3)^2 - 1))
+av4 <- c(sd(x4)^2, 1, abs(sd(x4)^2 - 1))
+pp <- as.data.frame(rbind(av1,av2,av3,av4))
+names(pp) <- c("Averages Variance","Theoretical Variance", "Difference")
+row.names(pp) <- c("10", "20", "30", "40")
+kable(pp)
 ```
 
-## Distribution
-```{r}
+```{r chunk8, fig.height = 3}
+datSample1 <- data.frame(
+  Sample1 = c(s1),
+  SampleSize = factor(rep(c(10), c(10000))))
 
+gSample1 <- ggplot(datSample1, aes(x = Sample1, fill = SampleSize)) + geom_histogram(alpha = .20, binwidth=.3, colour = "black", aes(y = ..density..)) 
+gSample1
+
+datSample2 <- data.frame(
+  Sample2 = c(s2),
+  SampleSize = factor(rep(c(20), c(20000))))
+
+gSample2 <- ggplot(datSample2, aes(x = Sample2, fill = SampleSize)) + geom_histogram(alpha = .20, binwidth=.3, colour = "black", aes(y = ..density..)) 
+gSample2
 ```
+
+```{r, chunk9, fig.height = 3}
+datSample3 <- data.frame(
+  Sample3 = c(s3),
+  SampleSize = factor(rep(c(30), c(30000))))
+
+gSample3 <- ggplot(datSample3, aes(x = Sample3, fill = SampleSize)) + geom_histogram(alpha = .20, binwidth=.3, colour = "black", aes(y = ..density..)) 
+gSample3
+
+datSample4 <- data.frame(
+  Sample4 = c(s4),
+  SampleSize = factor(rep(c(40), c(40000))))
+
+gSample4 <- ggplot(datSample4, aes(x = Sample4, fill = SampleSize)) + geom_histogram(alpha = .20, binwidth=.3, colour = "black", aes(y = ..density..)) 
+gSample4
+```
+

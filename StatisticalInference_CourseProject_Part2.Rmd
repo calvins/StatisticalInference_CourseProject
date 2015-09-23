@@ -5,30 +5,51 @@ date: "September 7, 2015"
 output: html_document
 ---
 
-The data consists of measurements of the mean length of the odontoblast cells harvested from 
-the incisor teeth of a population of 60 guinea pigs. These animals were divided into 6 groups of 10 
-and consistently fed a diet with one of 6 Vitamin C supplement regimes for a period of 42 days.
-The Vitamin C was administered either in the form of Orange Juice (OJ) or chemically pure Vitamin C 
-in aqueous solution (VC). Each animal received the same daily dosage of Vitamin C 
-(either 0.5, 1.0 or 2.0 milligrams) consistently. Since each combination of supplement type and dosage
-was given to 10 animals this required a total of 60 animals for the study. 
-After 42 days, the animals were euthanized, their incisor teeth were harvested and subject to analysis 
-via optical microscopy to determine the length (in microns) of the odontoblast cells 
-(the layer between the pulp and the dentine). The ToothGrowth data set therefore consists of 60 observations 
-of the 3 variables - mean length of odontoblasts (microns), supplement type (OJ or VC) and
-Vitamin C dosage (milligrams/day).
-60 obs of 3 variables
+## Synopsis
+In this report, we'll analyze a data set describing the length of teeth (measured in microns) in guinea pigs who received Vitamin C using two different methods (orange juice or ascorbic acid) and three different dosage levels (0.5, 1, and 2 mg).
 
--summary ToothGrowth
--the help file has a conditioning plot of len versus dose conditional on supp
-OJ
-0.5
-1
-2
-VC
-0.5
-1
-2
+## Data Exploration
+Figure 1 shows a conditioning plot of guinea pig teeth length versus dose, given the type of supplement.  We see
+1-using supp OJ or VC, the length increases as does increases from 0.5 to 1.0 to 2.0
+2-under OJ, the length range is about 12 to 27, and under VC, the length range is about 7 to 27
+3-for both OJ and VC, the change in length is about the same for doses 0.5 and 1.0
+under VC, increasing the dose from 1.0 to 2.0 shows a bigger increase in length than for OJ
+
+We'll create the following subsets
+ssOJ - teeth length of guinea pigs who received orange juice supplements
+ssVC - teeth length of guinea pigs who received ascorbic acid supplements
+ss0510 - teeth length of guinea pigs who received dosages of 0.5 and 1 mg.
+ss0520 - teeth length of guinea pigs who received dosages of 0.5 and 2 mg.
+ss1020 - teeth length of guinea pigs who received dosages of 1 and 2 mg.
+
+```{r}
+require(graphics)
+coplot(len ~ dose | supp, data = ToothGrowth, panel = panel.smooth,
+       xlab = "ToothGrowth data: length vs dose, given type of supplement")
+```
+
+```{r}
+ssOJ <- subset(ToothGrowth, supp == "OJ")
+ssVC <- subset(ToothGrowth, supp == "VC")
+ss0510 <- subset(ToothGrowth, dose == 0.5 | dose == 1)
+ss0520 <- subset(ToothGrowth, dose == 0.5 | dose == 2)
+ss1020 <- subset(ToothGrowth, dose == 1 | dose == 2)
+```
+
+range(ssOJ$len)
+range(ssVC$len)
+range(ss0510$len)
+range(ss0520$len)
+range(ss1020$len)
+
+
+## Confidence Intervals and tests
+
+## Results
+
+## Conclusions
+
+
 
 population of 60 guinea pigs, divided into 6 groups of 10
 
@@ -66,18 +87,3 @@ row 60 is mean length of tooth for guinea pig 60 from group 6
 2-compare by dosage 0.5 using 2 supplements vs 1.0 using 2 supplements vs 2.0 using 2 supplements
 
 so they measured each day and the data set contains the mean of 42 values?
-
-
-
-## Synopsis
-
-## Data Processing
-
-## Data Exploration
-
-## Confidence Intervals and tests
-
-## Results
-
-## Conclusions
-
