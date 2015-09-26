@@ -1,89 +1,126 @@
 ---
-title: "Statistical Inference Course Project Part 2"
+title: "The Effects of Vitamin C on Teeth Growth of Guinea Pigs"
 author: "Calvin Seto"
 date: "September 7, 2015"
-output: html_document
+output: pdf_document
 ---
 
 ## Synopsis
-In this report, we'll analyze a data set describing the length of teeth (measured in microns) in guinea pigs who received Vitamin C using two different methods (orange juice or ascorbic acid) and three different dosage levels (0.5, 1, and 2 mg).
+In this report, we'll analyze a data set describing the length of teeth (measured in microns) in 60 guinea pigs who received Vitamin C using two different methods (orange juice or ascorbic acid) and three different dosage levels (0.5, 1, and 2 mg).  We'll form some hypothesis tests and compute confidence intervals to compare the effects of Vitamin C on tooth length.  Specifically, we'll compare the supplement methods, ascorbic acid (VC) vs orange juice (OJ) and some of the different dosage combinations for each supplement: 0.5 vs 1.0, 0.5 vs 2.0, and 1.0 vs 2.0.
 
 ## Data Exploration
-Figure 1 shows a conditioning plot of guinea pig teeth length versus dose, given the type of supplement.  We see
-1-using supp OJ or VC, the length increases as does increases from 0.5 to 1.0 to 2.0
-2-under OJ, the length range is about 12 to 27, and under VC, the length range is about 7 to 27
-3-for both OJ and VC, the change in length is about the same for doses 0.5 and 1.0
-under VC, increasing the dose from 1.0 to 2.0 shows a bigger increase in length than for OJ
+Listing 1 shows the R code to create a conditioning plot of guinea pig teeth length versus dose, given the type of supplement and it's displayed in Figure 1.  Notice the following:
 
-We'll create the following subsets
-ssOJ - teeth length of guinea pigs who received orange juice supplements
-ssVC - teeth length of guinea pigs who received ascorbic acid supplements
-ss0510 - teeth length of guinea pigs who received dosages of 0.5 and 1 mg.
-ss0520 - teeth length of guinea pigs who received dosages of 0.5 and 2 mg.
-ss1020 - teeth length of guinea pigs who received dosages of 1 and 2 mg.
+1. the teeth length growth increases as the dose of Vitamin C increases for both supplement methods
 
-```{r}
+2. the range of tooth growth using ascorbic acid is larger than the range using orange juice
+
+3. using orange juice and increasing the dosage from 0.5 to 1.0, the rate of change in tooth length is slightly larger than using ascorbic acid at the same dosages
+
+4. using ascorbic acid and increasing the dosage from 1.0 to 2.0, the rate of change in tooth length is significantly larger than using orange juice at the same dosages
+
+Therefore, it makes sense to ask these questions:
+
+Q1. Is using ascorbic acid more effective than using orange juice in increasing teeth length of guinea pigs?
+
+Q2. Is a dosage of 1.0 mg more effective than using 0.5 mg using either supplement type; ascorbic acid or orange juice?
+
+Q3. Is a dosage of 2.0 mg more effective than using 1.0 mg using either supplement type; ascorbic acid or orange juice?
+
+## Confidence Intervals and hypothesis test for Question Q1
+Listing 2 shows the R code to create the subsets and the t test command and output.  The sample size of teeth length for guinea pigs receiving ascorbic acid (VC) or orange juice (OJ) is 30.
+
+Since this sample size is small, so we will use the t distribution, which has the following properties:
+-it has thicker tails than the normal distribution
+-it is indexed by a single parameter, the degrees of freedom
+-it assumes that the underlying data is iid Gaussian with the result that
+$$
+\frac{\bar X - \mu}{S/\sqrt{n}}
+$$
+follows Gosset's $t$ distribution with $n-1$ degrees of freedom
+- (If we replaced $s$ by $\sigma$ the statistic would be exactly standard normal)
+- Interval is $\bar X \pm t_{n-1} S/\sqrt{n}$ where $t_{n-1}$
+is the relevant quantile from the t distribution.
+
+We'll assume each sample contains data for 30 different guinea pigs, so the data is not paired and are independent groups.  Our null hypothesis is that the difference in the means of guinea pig teeth length taking Vitamin C using ascorbic acid or orange juice is zero.  We'll run t tests assuming equal and unequal variance just to see the difference.
+
+Assuming equal variance, the t statistic is 1.9153, degrees of freedom is 58, and the 95% confidence interval for the difference of the means of teeth length for guinea pigs taking ascorbic acid or orange juice is -0.17 to 7.57.  This interval contains 0 so we can't rule out the fact that the means can be equal.  Additionally, 95% of the intervals obtained when generating random samples would contain the upper point of 7.57.  Thus, the mean of guinea pig teeth length for those taking ascorbic acid can be greater than those taking orange juice.
+
+Assuming unequal variance, the t statistic is 1.9153, degrees of freedom is 55.309, and the 95% confidence interval for the difference of the means of teeth length for guinea pigs taking ascorbic acid or orange juice is -0.17 to 7.57.  The results are the same as equal variance except for the degrees of freedom.
+
+## Confidence Intervals and hypothesis test for Question Q2
+Listing 3 shows the R code for subsetting and t tests to compare the effects of doses of 0.5 and 1.0 mg of Vitamin C on the growth of guinea pig teeth.  Our sample sizes now are 10, so we'll continue using the t distribution and t tests.  The null hypothesis is that the difference in the means of guinea pig teeth length for those taking 0.5 and 1.0 mg of Vitamin C is zero.
+
+We'll run a t test comparing the doses using orange juice and another t test comparing the doses using ascorbic acid.
+
+Assuming unequal variance, using orange juice, the t statistic is -5.0486, degrees of freedom is 17.698, and the 95% confidence interval for the difference of the means of teeth length for guinea pigs taking 0.5 mg of 1.0 mg of Vitamin C is -13.42 to -5.52.  This interval is below 0 so we can say that the means are different and that the guinea pigs taking doses of 1.0 mg is greater than thos taking doses of 0.5 mg.
+
+Assuming unequal variance, using ascorbic acid, the t statistic is -5.0486, degrees of freedom is 17.698, and the 95% confidence interval for the difference of the means of teeth length for guinea pigs taking 0.5 mg of 1.0 mg of Vitamin C is -13.42 to -5.52.  This interval is below 0 so we can say that the means are different and that the guinea pigs taking doses of 1.0 mg is greater than thos taking doses of 0.5 mg.
+
+
+## Confidence Intervals and hypothesis test for Question Q3
+Listing 4 shows the R code for subsetting and t tests to compare the effects of doses of 1.0 and 2.0 mg of Vitamin C on the growth of guinea pig teeth.  Our sample sizes are 10, so we'll continue using the t distribution and t tests.  The null hypothesis is that the difference in the means of guinea pig teeth length for those taking 1.0and 2.0 mg of Vitamin C is zero.
+
+Assuming unequal variance, the t statistic is -5.0486, degrees of freedom is 17.698, and the 95% confidence interval for the difference of the means of teeth length for guinea pigs taking 0.5 mg of 1.0 mg of Vitamin C is -13.42 to -5.52.  This interval is below 0 so we can say that the means are different and that the guinea pigs taking doses of 1.0 mg is greater than thos taking doses of 0.5 mg.
+
+
+## Appendix
+Listing 1
+```{r chunk1}
 require(graphics)
 coplot(len ~ dose | supp, data = ToothGrowth, panel = panel.smooth,
-       xlab = "ToothGrowth data: length vs dose, given type of supplement")
+       xlab = "Figure 1\nToothGrowth data: length vs dose, given type of supplement")
 ```
 
-```{r}
+Listing 2
+```{r chunk2}
+dim(ToothGrowth)
+summary(ToothGrowth)
+
 ssOJ <- subset(ToothGrowth, supp == "OJ")
 ssVC <- subset(ToothGrowth, supp == "VC")
-ss0510 <- subset(ToothGrowth, dose == 0.5 | dose == 1)
-ss0520 <- subset(ToothGrowth, dose == 0.5 | dose == 2)
-ss1020 <- subset(ToothGrowth, dose == 1 | dose == 2)
+
+dim(ssOJ)
+dim(ssVC)
+
+t.test(ssVC$len, ssOJ$len, paired = FALSE, var.equal = TRUE)
+
+t.test(ssVC$len, ssOJ$len, paired = FALSE, var.equal = FALSE)
 ```
 
-range(ssOJ$len)
-range(ssVC$len)
-range(ss0510$len)
-range(ss0520$len)
-range(ss1020$len)
+Listing 3
+```{r chunk3}
+ssOJ05 <- subset(ToothGrowth, supp == "OJ" & dose == 0.5)
+ssOJ10 <- subset(ToothGrowth, supp == "OJ" & dose == 1.0)
+ssVC05 <- subset(ToothGrowth, supp == "VC" & dose == 0.5)
+ssVC10 <- subset(ToothGrowth, supp == "VC" & dose == 1.0)
 
+dim(ssOJ05)
+dim(ssOJ10)
 
-## Confidence Intervals and tests
+dim(ssVC05)
+dim(ssVC10)
 
-## Results
+t.test(ssOJ10$len, ssOJ05$len, paired = FALSE, var.equal = FALSE)    
 
-## Conclusions
+t.test(ssVC10$len, ssVC05$len, paired = FALSE, var.equal = FALSE)    
 
+```
 
+Listing 4
+```{r chunk4}
+ssOJ10 <- subset(ToothGrowth, supp == "OJ" & dose == 1.0)
+ssOJ20 <- subset(ToothGrowth, supp == "OJ" & dose == 2.0)
+ssVC10 <- subset(ToothGrowth, supp == "VC" & dose == 1.0)
+ssVC20 <- subset(ToothGrowth, supp == "VC" & dose == 2.0)
 
-population of 60 guinea pigs, divided into 6 groups of 10
+dim(ssOJ10)
+dim(ssOJ20)
 
-group 1
-group 2
-group 3
-group 4
-group 5
-group 6
+dim(ssVC10)
+dim(ssVC20)
 
-6 different regimes of vitamin C
-regime 1 OJ 0.5
-regime 2 OJ 1.0
-regime 3 OJ 2.0
-regime 4 VC 0.5
-regime 5 VC 1.0
-regime 6 VC 2.0
+t.test(ssOJ20$len, ssOJ10$len, paired = FALSE, var.equal = FALSE)
 
-after 42 days, pigs were euthanized and the mean length of teeth for each group were measured
-
-ToothGrowth dataset
-60 obs of 3 variables-len, supp, dose
-
-row 1 is mean length of tooth for guinea pig 1 from group 1
-row 2 is mean length of tooth for guinea pig 2 from group 1
-row 3 is mean length of tooth for guinea pig 3 from group 1
-...
-row 11 is mean length of tooth for guinea pig 11 from group 2
-row 12 is mean length of tooth for guinea pig 12 from group 2
-row 13 is mean length of tooth for guinea pig 13 from group 2
-...
-row 60 is mean length of tooth for guinea pig 60 from group 6
-
-1-compare by supplement orange juice using 3 dosages vs chemical using 3 dosages
-2-compare by dosage 0.5 using 2 supplements vs 1.0 using 2 supplements vs 2.0 using 2 supplements
-
-so they measured each day and the data set contains the mean of 42 values?
+t.test(ssVC20$len, ssVC10$len, paired = FALSE, var.equal = FALSE)
+```

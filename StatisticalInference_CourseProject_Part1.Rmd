@@ -2,7 +2,7 @@
 title: "Applying the Central Limit Theorem to Averages of Random Exponentials"
 author: "Calvin Seto"
 date: "September 7, 2015"
-output: html_document
+output: pdf_document
 ---
 
 ## Overview
@@ -10,7 +10,8 @@ In this exercise, we will use the Central Limit Theorem to show that the distrib
 
 The Law of Large Numbers says that the sample mean or average limits to what it's estimating, the population mean.
 It assumes the data have to be independent and identically distributed, or iid (independent and all drawn from the same population).
-Figure 1 shows R code that computes 1,000 averages from 1,000 samples of random exponentials and plots the cumulative means.  Notice how the averages are random at first but converge to 5 the mean of the exponential distribution with lambda = 0.2.
+
+Listing 1 shows R code that computes 1,000 averages from 1,000 samples of random exponentials and plots the cumulative means in Figure 1.  Notice how the averages are random at first but converge to 5 the mean of the exponential distribution with lambda = 0.2.
 
 An estimator is consistent if it converges to what you want to estimate.  The sample mean of iid samples is consistent with the population mean.  The sample variance and standard deviation is consitent as well.
 
@@ -28,6 +29,8 @@ nosim - number of simulations - 1,000
 lambda - exponential distribution rate parameter - 0.2
 mu - mean of the exponential distribution - 1/lambda = 5
 s - standard deviation of the exponential distribution - 1/lambda = 5
+
+Listing 2 shows the R code to set up the variables we need for the CLT approximation.
 
 The function cfunc(x, n) will normalize a vector x, with sample size n using the CLT result, subtracting the mean of the estimate from the estimate and dividing by the standard error of the estimate.
 
@@ -50,41 +53,24 @@ The properties of the distribution of averages of 40 exponentials is
 and variance = 1.
 
 ## Sample Mean versus Theoretical Mean
-Figure 4 shows the means of the 4 samples I used
-Sample size  Mean
-10 6.962282
-20 6.265946
-30 5.17774
-40 4.567163
-
-The theoretical mean is 1/lambda = 1/0.2 = 5.
+Table 1 shows the means of the 4 samples I used, the theoretical mean, and the differences between the two for sample size 10, 20, 30, and 40.  As the sample size increases, the difference between the sample mean and the theoretical mean decreases from 1.96 to 0.43.  This supports the CLT property that the sample mean limits to the theoretical mean as the sample size increases.  The sample mean is 6.96 for sample size 10, and 4.57 for sample size 40, getting closer to 5.
 
 ## Sample Variance versus Theoretical Variance
-Figure 5 shows the variances of the 4 samples I used
-Sample Size  Variance
-10 55.92664
-20 58.5126
-30 38.22658
-40 23.12854
-
-The theoretical variance is (1/lambda)^2 = (1/0.2)^2 = 5^2 = 25.
+Table 2 shows the variances of the 4 samples I used, the theoretical variance, and the differences between the two.  The theoretical variance is (1/lambda)^2 = (1/0.2)^2 = 5^2 = 25.
 
 The variances are different because 
 
 ## Distribution
-The distribution of the random samples of exponentials are shown in Figure 6 and 7.  Notice the shapes of all four histograms of sample size 10, 20, 30, and 40 are NOT bell shaped.
+Listing 3 shows the R code that combines the CLT approximations of averages of random exponentials for sample sizes 10, 20, 30, and 40 and creates histograms of the distributions in Figure 2.  A normal distribution is plotted over each histogram for comparison.  As the sample size increases from 10 to 40, the distribution of the averages of 40 exponentials becomes more bell shaped.
 
-Figure 8 shows the distributions of averages of 10, 20, 30, and 40 exponentials.
+Notice how each histogram is centered close to 0.  Table 3 shows the means of the averages of the 4 samples I used, the theoretical mean, and the differences between the two.  The CLT says the distribution of averages is standard normal with a mean = 0  The averages mean changes from 1.24 to -0.55, but the averages mean for sample size of 30 has a smaller difference of 0.19.  The CLT does not guarantee a standard normal distribution as the sample size increases.
 
-The distribution of the averages of 40 exponentials is standard normal.
+Table 4 shows the variances of the averages of the 4 samples I used, the theoretical variance, and the differences between the two.  The CLT say the variance of the distribution of averages should be standard normal with a variance = 1.  The variance of the distribution of averages of exponentials for sample size 10 is 2.30 and the variance for sample size 40 is 0.89 supporting the CLT.
 
-The distribution of the averages of 40 exponentials is centered around 0.
-
-The variance of the distribution of the averages of 40 exponentials is 1.
-
-The distribution is bell shaped.
+Listing 4 shows the R code which generates histograms of the samples of random exponentials used to calculate the averages.  Figures 3, 4, 5, and 6 show histgrams for sample sizes of 10,000, 20,000, 30,000, and 40,000.  Notice the shapes of all four histograms are NOT bell shaped.
 
 ## Appendix
+Listing 1
 ```{r chunk1, fig.height = 3}
 set.seed(568)
 library(ggplot2)
@@ -94,9 +80,11 @@ means <- cumsum(sample(rexp(n, lambda), n , replace = TRUE)) / (1  : n)
 g <- ggplot(data.frame(x = 1 : n, y = means), aes(x = x, y = y)) 
 g <- g + geom_hline(yintercept = 5) + geom_line(size = 2) 
 g <- g + labs(x = "Number of obs", y = "Cumulative mean")
+g <- g + ggtitle("Figure 1\nLaw of Large Numbers\nExponential Distribution")
 g
 ```
 
+Listing 2
 ```{r chunk2}
 set.seed(568)
 library(ggplot2)
@@ -120,6 +108,7 @@ x3 <- apply(m3, 1, cfunc, 30)
 x4 <- apply(m4, 1, cfunc, 40)
 ```
 
+Table 1
 ```{r chunk3, echo=FALSE}
 library(knitr)
 ss1 <- c(mean(s1), 5, abs(mean(s1) - 5))
@@ -132,6 +121,7 @@ row.names(mm) <- c("10", "20", "30", "40")
 kable(mm)
 ```
 
+Table 2
 ```{r chunk4, echo=FALSE}
 library(knitr)
 v1 <- c(sd(s1)^2, 25, abs(sd(s1)^2 - 25))
@@ -144,15 +134,18 @@ row.names(nn) <- c("10", "20", "30", "40")
 kable(nn)
 ```
 
+Listing 3
 ```{r chunk5}
 dat <- data.frame(
   x = c(x1, x2, x3, x4),
   size = factor(rep(c(10, 20, 30, 40), rep(nosim, 4))))
 g <- ggplot(dat, aes(x = x, fill = size)) + geom_histogram(alpha = .20, binwidth=.3, colour = "black", aes(y = ..density..)) 
 g <- g + stat_function(fun = dnorm, size = 2)
+g <- g + ggtitle("Figure 2\nCentral Limit Theorem Approximation\nAverages of Exponentials")
 g + facet_grid(. ~ size)
 ```
 
+Table 3
 ```{r chunk6, echo=FALSE}
 library(knitr)
 am1 <- c(mean(x1), 0, abs(mean(x1) - 0))
@@ -165,6 +158,7 @@ row.names(oo) <- c("10", "20", "30", "40")
 kable(oo)
 ```
 
+Table 4
 ```{r chunk7, echo=FALSE}
 library(knitr)
 av1 <- c(sd(x1)^2, 1, abs(sd(x1)^2 - 1))
@@ -177,35 +171,26 @@ row.names(pp) <- c("10", "20", "30", "40")
 kable(pp)
 ```
 
+Listing 4
 ```{r chunk8, fig.height = 3}
-datSample1 <- data.frame(
-  Sample1 = c(s1),
-  SampleSize = factor(rep(c(10), c(10000))))
+library(ggplot2)
+dfs1 <- data.frame(s1)
+gs1 <- ggplot(data=dfs1, aes(dfs1$s1)) + geom_histogram() + geom_histogram(alpha = .20, binwidth=.3, colour = "black", aes(y = ..density..))
+gs1 <- gs1 + ggtitle("Figure 2\nHistogram of Random Exponentials with Sample Size 10")
+gs1
 
-gSample1 <- ggplot(datSample1, aes(x = Sample1, fill = SampleSize)) + geom_histogram(alpha = .20, binwidth=.3, colour = "black", aes(y = ..density..)) 
-gSample1
+dfs2 <- data.frame(s2)
+gs2 <- ggplot(data=dfs2, aes(dfs2$s2)) + geom_histogram() + geom_histogram(alpha = .20, binwidth=.3, colour = "black", aes(y = ..density..))
+gs2 <- gs2 + ggtitle("Figure 3\nHistogram of Random Exponentials with Sample Size 20")
+gs2
 
-datSample2 <- data.frame(
-  Sample2 = c(s2),
-  SampleSize = factor(rep(c(20), c(20000))))
+dfs3 <- data.frame(s3)
+gs3 <- ggplot(data=dfs3, aes(dfs3$s3)) + geom_histogram() + geom_histogram(alpha = .20, binwidth=.3, colour = "black", aes(y = ..density..))
+gs3 <- gs3 + ggtitle("Figure 4\nHistogram of Random Exponentials with Sample Size 30")
+gs3
 
-gSample2 <- ggplot(datSample2, aes(x = Sample2, fill = SampleSize)) + geom_histogram(alpha = .20, binwidth=.3, colour = "black", aes(y = ..density..)) 
-gSample2
+dfs4 <- data.frame(s4)
+gs4 <- ggplot(data=dfs4, aes(dfs4$s4)) + geom_histogram() + geom_histogram(alpha = .20, binwidth=.3, colour = "black", aes(y = ..density..))
+gs4 <- gs4 + ggtitle("Figure 5\nHistogram of Random Exponentials with Sample Size 40")
+gs4
 ```
-
-```{r, chunk9, fig.height = 3}
-datSample3 <- data.frame(
-  Sample3 = c(s3),
-  SampleSize = factor(rep(c(30), c(30000))))
-
-gSample3 <- ggplot(datSample3, aes(x = Sample3, fill = SampleSize)) + geom_histogram(alpha = .20, binwidth=.3, colour = "black", aes(y = ..density..)) 
-gSample3
-
-datSample4 <- data.frame(
-  Sample4 = c(s4),
-  SampleSize = factor(rep(c(40), c(40000))))
-
-gSample4 <- ggplot(datSample4, aes(x = Sample4, fill = SampleSize)) + geom_histogram(alpha = .20, binwidth=.3, colour = "black", aes(y = ..density..)) 
-gSample4
-```
-
