@@ -6,68 +6,70 @@ output: pdf_document
 ---
 
 ## Overview
-In this exercise, we will use the Central Limit Theorem to show that the distribution of averages of independent and identically distributed exponential variables becomes that of a standard normal as the sample size increases.  Using R, we can simulate random exponentials of sample size 10, 20, 30, and 40 and compute 1,000 averages for each sample size.  Lastly, we can compute the Central Limit Theorem approximation of the distribution of exponential averages and discuss its attributes.
+In this exercise, we will use the Central Limit Theorem to show that the distribution of averages of independent and identically distributed exponential variables becomes that of a standard normal as the sample size increases.  Using R, we can simulate random exponentials of different sample sizes and compute 1,000 averages from each sample size.  Lastly, we can compute the Central Limit Theorem approximation of the distribution of exponential averages and discuss its attributes.
 
 The Law of Large Numbers says that the sample mean or average limits to what it's estimating, the population mean.
 It assumes the data have to be independent and identically distributed, or iid (independent and all drawn from the same population).
 
-Listing 1 shows R code that computes 1,000 averages from 1,000 samples of random exponentials and plots the cumulative means in Figure 1.  Notice how the averages are random at first but converge to 5 the mean of the exponential distribution with lambda = 0.2.
+Listing 1 shows R code that computes 1,000 averages from 1,000 samples of random exponentials and plots the cumulative means in Figure 1.  Notice how the averages are random at first but converge to 5, the mean of the exponential distribution with $\lambda$ = 0.2.
 
-An estimator is consistent if it converges to what you want to estimate.  The sample mean of iid samples is consistent with the population mean.  The sample variance and standard deviation is consitent as well.
+An estimator is consistent if it converges to what you want to estimate.  The sample mean of iid samples is consistent with the population mean.  The sample variance and standard deviation is consistent as well.
 
 The Central Limit Theorem says that the distribution of averages of iid random variables, properly normalized, becomes that of a standard normal as the sample size increases.
 
-The result is that if you subtract the population mean from the sample mean and divide by the standard error, that distribution is standard normal.  Replacing the population sd with the sample sd does not change the CLT.
-
-## Simulations
-We'll use the R function rexp(n, lambda) again to create more random samples of exponentials with sample sizes of 10,000, 20,000 30,000, and 40,000.  We'll set lambda = 0.2 for all simulations and we know the mean = 1/lambda and the standard deviation = 1/lambda.  Therefore, the mean and standard deviation = 1/0.2 = 5.  We'll call these samples of exponentials s1, s2, s3, and s4.
-
-In order to compute our averages of varying sizes of exponentials, we'll reorganize the samples s1, s2, s3, and s4 into matrices m1, m2, m3, and m4 of sizes 1000x10, 1000x20, 1000x30, and 1000x40.  Now it is easy to use the R function apply to normalize the averages with the CLT approximation of subtracting the population mean from the sample mean and dividing by the standard error.
-
-We set up default variables:
-nosim - number of simulations - 1,000
-lambda - exponential distribution rate parameter - 0.2
-mu - mean of the exponential distribution - 1/lambda = 5
-s - standard deviation of the exponential distribution - 1/lambda = 5
-
-Listing 2 shows the R code to set up the variables we need for the CLT approximation.
-
-The function cfunc(x, n) will normalize a vector x, with sample size n using the CLT result, subtracting the mean of the estimate from the estimate and dividing by the standard error of the estimate.
-
+The result is that
 $$\frac{\bar X_n - \mu}{\sigma / \sqrt{n}}=
 \frac{\sqrt n (\bar X_n - \mu)}{\sigma}
-= \frac{\mbox{Estimate} - \mbox{Mean of estimate}}{\mbox{Std. Err. of estimate}}$$
+= \frac{\mbox{Estimate} - \mbox{Mean of estimate}}{\mbox{Std. Err. of estimate}}$$ has a distribution like that of a standard normal for large $n$.
 
+The useful way to think about the CLT is that 
 $\bar X_n$ is approximately
 $N(\mu, \sigma^2 / n)$
 
-The results of the CLT approximations of the distribution of averages of exponentials are stored in the variables x1, x2, x3, x4 - 4 vectors of 1000 numerics.
 
-The dat variable is a data frame of size 4000x2 to hold our CLT approximations and sample size factors of 10, 20, 30, and 40 used to create histograms with ggplot.
+## Simulations
+We'll use the R function rexp(n, $\lambda$) to create random samples of exponentials with sample sizes of 10,000, 20,000 30,000, and 40,000.  We'll set $\lambda$ = 0.2 for all simulations and we know the mean and standard deviation = 1/$\lambda$, or 1/0.2 = 5, and the variance is $\sigma^2$ = 25.  We'll call these samples of exponentials s1, s2, s3, and s4.
 
-We'll set the seed of R's random number generator to 768 368 468 568 so we can reproduce the results.
+In order to compute our averages of random exponentials, we'll reorganize the samples s1, s2, s3, and s4 into matrices m1, m2, m3, and m4 of sizes 1000x10, 1000x20, 1000x30, and 1000x40.  Then the R function apply is used with a custom function to normalize the averages with the CLT approximation of subtracting the population mean from the sample mean and dividing by the standard error.
 
-The properties of the distribution of averages of 40 exponentials is 
--it is bell shaped and standard normal
--with a mean = 0
-and variance = 1.
+We set up default variables:
+
+nosim - number of simulations - 1,000
+
+lambda - exponential distribution rate parameter - 0.2
+
+mu - mean of the exponential distribution - 1/lambda = 5
+
+s - standard deviation of the exponential distribution - 1/lambda = 5
+
+Listing 2 shows the R code to set up the variables we need for the CLT approximation. We'll set the seed of R's random number generator to 568 so we can reproduce the results.
 
 ## Sample Mean versus Theoretical Mean
-Table 1 shows the means of the 4 samples I used, the theoretical mean, and the differences between the two for sample size 10, 20, 30, and 40.  As the sample size increases, the difference between the sample mean and the theoretical mean decreases from 1.96 to 0.43.  This supports the CLT property that the sample mean limits to the theoretical mean as the sample size increases.  The sample mean is 6.96 for sample size 10, and 4.57 for sample size 40, getting closer to 5.
+Table 1 shows a comparison of sample means to the theoretical means for each sample size.  The sample mean for size of 10,000 exponentials is about 6.96, 1.96 more than 5.  The sample mean for size of 40,000 exponentials is about 4.57, 0.43 less than 5.  This supports the property of the Law of Large Numbers, as the sample mean approaches 5 as the sample size increases. 
 
 ## Sample Variance versus Theoretical Variance
-Table 2 shows the variances of the 4 samples I used, the theoretical variance, and the differences between the two.  The theoretical variance is (1/lambda)^2 = (1/0.2)^2 = 5^2 = 25.
-
-The variances are different because 
+Table 2 shows a comparison of sample variances to the theoretical variances for each sample size.  The sample variance for size of 10,000 exponentials is about 55.93, 30.93 more than 25.  The sample variance for size of 40,000 exponentials is about 23.13, 1.87 less than 25.  It appears the Law of Large Numbers can be applied to the sample variances, too as the sample variance approaches 25.
 
 ## Distribution
-Listing 3 shows the R code that combines the CLT approximations of averages of random exponentials for sample sizes 10, 20, 30, and 40 and creates histograms of the distributions in Figure 2.  A normal distribution is plotted over each histogram for comparison.  As the sample size increases from 10 to 40, the distribution of the averages of 40 exponentials becomes more bell shaped.
+The function cfunc(x, n) in Listing 2 will normalize a vector x, with sample size n using the CLT result as described before.
 
-Notice how each histogram is centered close to 0.  Table 3 shows the means of the averages of the 4 samples I used, the theoretical mean, and the differences between the two.  The CLT says the distribution of averages is standard normal with a mean = 0  The averages mean changes from 1.24 to -0.55, but the averages mean for sample size of 30 has a smaller difference of 0.19.  The CLT does not guarantee a standard normal distribution as the sample size increases.
+The results of the CLT approximations of the distribution of averages of exponentials are stored in the variables x1, x2, x3, x4; four vectors of 1,000 numerics.
 
-Table 4 shows the variances of the averages of the 4 samples I used, the theoretical variance, and the differences between the two.  The CLT say the variance of the distribution of averages should be standard normal with a variance = 1.  The variance of the distribution of averages of exponentials for sample size 10 is 2.30 and the variance for sample size 40 is 0.89 supporting the CLT.
+Listing 3 shows the R code that will package our CLT approximations into a data frame called dat for ggplot to display.  The dat variable has size 4,000x2 to hold our CLT approximations and sample size factors of 10, 20, 30, and 40 used to create four histograms.  Figure 2 shows the distributions of the averages of random exponentials for sample sizes 10, 20, 30, and 40.
 
-Listing 4 shows the R code which generates histograms of the samples of random exponentials used to calculate the averages.  Figures 3, 4, 5, and 6 show histgrams for sample sizes of 10,000, 20,000, 30,000, and 40,000.  Notice the shapes of all four histograms are NOT bell shaped.
+The properties of the distributions of averages of exponentials is
+
+-it is bell shaped and standard normal
+
+-with a mean = 0 and variance = 1.
+
+Normal distributions are drawn over the 4 histograms.  Notice how each histogram is centered close to the red, dashed vertical line at 0.
+
+Table 3 shows a comparison of averages means to the theoretical means for each sample size.  The averages mean for size of 10 exponentials is about 1.24, 1.24 more than 0.  The averages mean for size of 40 exponentials is about -0.55, 0.55 less than 0.  The CLT says the mean of the distribution of averages should be standard normal with a mean = 0.  Notice, the averages mean for sample size 30 has a smaller difference of 0.19 compared to sample size 40.  The CLT does not guarantee a standard normal distribution as the sample size increases.
+
+Table 4 shows a comparison of averages variances to the theoretical variances for each sample size.  The averages variance for size of 10 exponentials is about 2.30, 1.30 more than 1.  The averages variance for size of 40 exponentials is about 0.89, 0.11 less than 1.  The CLT says the variance of the distribution of averages should be standard normal with a variance = 1.  This supports the property of the Central Limit Theorem, also.
+
+Listing 4 shows the R code which generates a histogram of the sample of random exponentials used to calculate the averages.  Figure 3 shows the histgram for random exponentials of sample size 40,000.  Notice the shape of this histogram is NOT bell shaped, whereas the histograms of the averages of exponentials of sample size 10, 20, 30, and 40 ARE bell shaped.
 
 ## Appendix
 Listing 1
@@ -117,7 +119,7 @@ ss3 <- c(mean(s3),5, abs(mean(s3) - 5))
 ss4 <- c(mean(s4),5, abs(mean(s4) - 5))
 mm <- as.data.frame(rbind(ss1,ss2,ss3,ss4))
 names(mm) <- c("Sample Mean","Theoretical Mean", "Difference")
-row.names(mm) <- c("10", "20", "30", "40")
+row.names(mm) <- c("10,000", "20,000", "30,000", "40,000")
 kable(mm)
 ```
 
@@ -130,7 +132,7 @@ v3 <- c(sd(s3)^2, 25, abs(sd(s3)^2 - 25))
 v4 <- c(sd(s4)^2, 25, abs(sd(s4)^2 - 25))
 nn <- as.data.frame(rbind(v1,v2,v3,v4))
 names(nn) <- c("Sample Variance","Theoretical Variance", "Difference")
-row.names(nn) <- c("10", "20", "30", "40")
+row.names(nn) <- c("10,000", "20,000", "30,000", "40,000")
 kable(nn)
 ```
 
@@ -140,6 +142,7 @@ dat <- data.frame(
   x = c(x1, x2, x3, x4),
   size = factor(rep(c(10, 20, 30, 40), rep(nosim, 4))))
 g <- ggplot(dat, aes(x = x, fill = size)) + geom_histogram(alpha = .20, binwidth=.3, colour = "black", aes(y = ..density..)) 
+g <- g + geom_vline(aes(xintercept=0), colour="#990000", linetype="dashed")
 g <- g + stat_function(fun = dnorm, size = 2)
 g <- g + ggtitle("Figure 2\nCentral Limit Theorem Approximation\nAverages of Exponentials")
 g + facet_grid(. ~ size)
@@ -172,25 +175,9 @@ kable(pp)
 ```
 
 Listing 4
-```{r chunk8, fig.height = 3}
-library(ggplot2)
-dfs1 <- data.frame(s1)
-gs1 <- ggplot(data=dfs1, aes(dfs1$s1)) + geom_histogram() + geom_histogram(alpha = .20, binwidth=.3, colour = "black", aes(y = ..density..))
-gs1 <- gs1 + ggtitle("Figure 2\nHistogram of Random Exponentials with Sample Size 10")
-gs1
-
-dfs2 <- data.frame(s2)
-gs2 <- ggplot(data=dfs2, aes(dfs2$s2)) + geom_histogram() + geom_histogram(alpha = .20, binwidth=.3, colour = "black", aes(y = ..density..))
-gs2 <- gs2 + ggtitle("Figure 3\nHistogram of Random Exponentials with Sample Size 20")
-gs2
-
-dfs3 <- data.frame(s3)
-gs3 <- ggplot(data=dfs3, aes(dfs3$s3)) + geom_histogram() + geom_histogram(alpha = .20, binwidth=.3, colour = "black", aes(y = ..density..))
-gs3 <- gs3 + ggtitle("Figure 4\nHistogram of Random Exponentials with Sample Size 30")
-gs3
-
+```{r chunk8, fig.height = 2.5, message = FALSE, warning = FALSE}
 dfs4 <- data.frame(s4)
 gs4 <- ggplot(data=dfs4, aes(dfs4$s4)) + geom_histogram() + geom_histogram(alpha = .20, binwidth=.3, colour = "black", aes(y = ..density..))
-gs4 <- gs4 + ggtitle("Figure 5\nHistogram of Random Exponentials with Sample Size 40")
+gs4 <- gs4 + ggtitle("Figure 3 Histogram of Random Exponentials with Sample Size 40,000")
 gs4
 ```
